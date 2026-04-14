@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Usuarios</title>
+</head>
+<body>
+
+<h1>Lista de usuarios</h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Acciones</th>
+    </tr>
+
+    <tr th:each="usuario : ${usuarios}">
+        <td th:text="${usuario.id}"></td>
+        <td th:text="${usuario.nombre}"></td>
+        <td th:text="${usuario.email}"></td>
+        <td>
+            <a th:href="@{'/usuarios-web/eliminar/' + ${usuario.id}}">
+                Eliminar
+            </a>
+        </td>
+    </tr>
+</table>
+
+<h2>Crear usuario</h2>
+
+<form action="/usuarios-web" method="post">
+    <label>Nombre:</label>
+    <input type="text" name="nombre"><br>
+
+    <label>Email:</label>
+    <input type="text" name="email"><br>
+
+    <label>Password:</label>
+    <input type="text" name="password"><br>
+
+    <button type="submit">Crear</button>
+</form>
+
+</body>
+</html>
