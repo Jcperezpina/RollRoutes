@@ -13,6 +13,7 @@ public class Usuario {
     @Column(unique = true) //Evitamos duplicados
     private String email;
     private String password;
+    private String rol;
 
     // Constructor vacío
     public Usuario() {}
@@ -28,4 +29,7 @@ public class Usuario {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 }

@@ -5,5 +5,14 @@
 </head>
 <body>
 <h1>Bienvenido a RollRoutes 🚀</h1>
+
+<a th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol == 'ADMIN'}"
+   href="/usuarios-web">
+    Gestión de usuarios
+</a>
+
+<a href="/login">Login</a>
+<a href="/registro">Registro</a>
+<a href="/logout">Cerrar sesion</a>
 </body>
 </html>

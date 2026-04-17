@@ -13,11 +13,17 @@ public class LoginInterceptor implements HandlerInterceptor {
             throws Exception {
         HttpSession session = request.getSession();
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-
         String uri = request.getRequestURI();
 
+        if (uri.startsWith("/usuarios-web")) {
+            if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+                response.sendRedirect("/login");
+                return false;
+            }
+        }
+
         // Rutas Públicas (no bloquear)
-        if (uri.equals("/login") || uri.equals("/logout") || uri.startsWith("/css") || uri.startsWith("/js") || uri.startsWith("/images") || uri.equals("/")) {
+        if (uri.equals("/login") || uri.equals("/logout") || uri.startsWith("/css") || uri.startsWith("/js") || uri.startsWith("/registro") || uri.startsWith("/images") || uri.equals("/")) {
             return true;
         }
 
