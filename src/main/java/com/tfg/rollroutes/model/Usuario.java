@@ -10,6 +10,7 @@ public class Usuario {
     private Long id;
 
     private String nombre;
+    @Column(unique = true) //Evitamos duplicados
     private String email;
     private String password;
 

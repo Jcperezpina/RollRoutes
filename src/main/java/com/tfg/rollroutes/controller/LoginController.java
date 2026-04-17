@@ -5,6 +5,7 @@ import com.tfg.rollroutes.repository.UsuarioRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class LoginController {
@@ -21,15 +22,27 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String procesarLogin(String email, String password, Model model) {
+    public String procesarLogin(String email, String password, Model model, HttpSession session) {
 
         Usuario usuario = repository.findByEmail(email);
 
         if (usuario != null && usuario.getPassword().equals(password)) {
+
+            //Guardamos el usuario en la sesion
+            session.setAttribute("usuarioLogueado", usuario);
+
             return "redirect:/usuarios-web";
         } else {
             model.addAttribute("error", true);
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+
+        session.invalidate(); //Para salir de la sesión
+
+        return "redirect:/login";
     }
 }
