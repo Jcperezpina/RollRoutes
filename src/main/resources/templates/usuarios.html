@@ -20,6 +20,11 @@
         <td th:text="${usuario.nombre}"></td>
         <td th:text="${usuario.email}"></td>
         <td>
+            <a th:href="@{'/usuarios-web/editar/' + ${usuario.id}}">
+                Editar
+            </a>
+        </td>
+        <td>
             <a th:href="@{'/usuarios-web/eliminar/' + ${usuario.id}}">
                 Eliminar
             </a>
