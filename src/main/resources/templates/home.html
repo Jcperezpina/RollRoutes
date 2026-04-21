@@ -1,18 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>RollRoutes</title>
 </head>
 <body>
+
 <h1>Bienvenido a RollRoutes 🚀</h1>
 
-<a th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol == 'ADMIN'}"
-   href="/usuarios-web">
-    Gestión de usuarios
+
+<p>Encuentra y comparte rutas de patinaje</p>
+
+<!--  Usuario NO logueado -->
+<div th:if="${session.usuarioLogueado == null}">
+    <a href="/login">Login</a>
+    <a href="/registro">Registro</a>
+</div>
+
+<!--  Usuario logueado -->
+<div th:if="${session.usuarioLogueado != null}">
+    <a href="/rutas">Ver rutas</a>
+    <a href="/logout">Cerrar sesión</a>
+
+    <!-- admin -->
+    <div th:if="${session.usuarioLogueado.rol == 'ADMIN'}">
+        <a href="/usuarios-web">Gestión de usuarios</a>
+    </div>
+</div>
+
+
+<h2>Agenda de rutas</h2>
+
+<a th:if="${session.usuarioLogueado != null}" href="/agenda/crear">
+    Crear evento
 </a>
 
-<a href="/login">Login</a>
-<a href="/registro">Registro</a>
-<a href="/logout">Cerrar sesion</a>
+<table border="1">
+    <tr>
+        <th>Ruta</th>
+        <th>Fecha</th>
+        <th>Organizador</th>
+        <th>Acción</th>
+        <th>Participantes</th>
+    </tr>
+
+    <tr th:each="evento : ${eventos}">
+        <td th:text="${evento.ruta.nombre}"></td>
+        <td th:text="${evento.fecha}"></td>
+        <td th:text="${evento.creador.nombre}"></td>
+        <td>
+
+            <a th:if="${session.usuarioLogueado != null and !usuarioApuntado[evento.id]}"
+               th:href="@{'/agenda/unirse/' + ${evento.id}}">
+                Unirse
+            </a>
+
+            <a th:if="${session.usuarioLogueado != null and usuarioApuntado[evento.id]}"
+               th:href="@{'/agenda/salir/' + ${evento.id}}">
+                Salir
+            </a>
+
+        </td>
+        <td>
+    <span th:each="p : ${evento.participantes}"
+          th:text="${p.nombre} + ' '">
+    </span>
+        </td>
+    </tr>
+</table>
+
 </body>
 </html>

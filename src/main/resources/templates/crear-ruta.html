@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Crear Ruta</title>
+</head>
+<body>
+
+<h1>Crear nueva ruta</h1>
+
+<form action="/rutas/crear" method="post">
+
+    <label>Nombre:</label>
+    <input type="text" name="nombre"><br>
+
+    <label>Descripción:</label>
+    <input type="text" name="descripcion"><br>
+
+    <label>Ubicación:</label>
+    <input type="text" name="ubicacion"><br>
+
+    <label>Fecha:</label>
+    <input type="date" name="fecha"><br>
+
+    <button type="submit">Crear</button>
+
+</form>
+
+</body>
+</html>

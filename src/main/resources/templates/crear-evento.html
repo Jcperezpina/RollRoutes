@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Crear Evento</title>
+</head>
+<body>
+
+<h1>Crear evento de ruta</h1>
+
+<form action="/agenda/crear" method="post">
+
+    <label>Ruta:</label>
+    <select name="rutaId">
+        <option th:each="ruta : ${rutas}"
+                th:value="${ruta.id}"
+                th:text="${ruta.nombre}">
+        </option>
+    </select>
+    <br>
+
+    <label>Fecha:</label>
+    <input type="date" name="fecha"><br>
+
+    <button type="submit">Crear evento</button>
+
+</form>
+
+</body>
+</html>

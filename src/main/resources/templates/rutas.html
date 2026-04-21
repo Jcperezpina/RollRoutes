@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rutas</title>
+</head>
+<body>
+
+<h1>Lista de rutas</h1>
+
+<a href="/rutas/crear">Crear ruta</a>
+
+<table border="1">
+    <tr>
+        <th>Nombre</th>
+        <th>Ubicación</th>
+        <th>Fecha</th>
+        <th>Descripción</th>
+    </tr>
+
+    <tr th:each="ruta : ${rutas}">
+        <td th:text="${ruta.nombre}"></td>
+        <td th:text="${ruta.ubicacion}"></td>
+        <td th:text="${ruta.fecha}"></td>
+        <td th:text="${ruta.descripcion}"></td>
+        <td th:text="${ruta.creador.nombre}"></td>
+
+    </tr>
+</table>
+
+</body>
+</html>
