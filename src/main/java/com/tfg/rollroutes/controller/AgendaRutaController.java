@@ -82,4 +82,24 @@ public class AgendaRutaController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/agenda/eliminar/{id}")
+    public String eliminarEvento(@PathVariable Long id, HttpSession session) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+
+        AgendaRuta evento = agendaRutaRepository.findById(id).orElse(null);
+
+        if (evento != null && usuario != null) {
+
+            boolean esCreador = evento.getCreador().getId().equals(usuario.getId());
+            boolean esAdmin = "ADMIN".equals(usuario.getRol());
+
+            if (esCreador || esAdmin) {
+                agendaRutaRepository.delete(evento);
+            }
+        }
+
+        return "redirect:/";
+    }
 }

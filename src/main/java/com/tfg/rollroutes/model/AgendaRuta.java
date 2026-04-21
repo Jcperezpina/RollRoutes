@@ -38,4 +38,10 @@ public class AgendaRuta {
 
     public List<Usuario> getParticipantes() { return participantes; }
     public void setParticipantes(List<Usuario> participantes) { this.participantes = participantes; }
+
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
+    private List<Comentario> comentarios = new ArrayList<>();
+
+    public List<Comentario> getComentarios() { return comentarios; }
+    public void setComentarios(List<Comentario> comentarios) { this.comentarios = comentarios; }
 }

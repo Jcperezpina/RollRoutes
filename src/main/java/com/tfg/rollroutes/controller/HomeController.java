@@ -7,7 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -21,7 +24,7 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model, HttpServletRequest request) {
 
-        var eventos = agendaRutaRepository.findAll();
+        List<AgendaRuta> eventos = agendaRutaRepository.findAll();
 
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
 
@@ -37,8 +40,20 @@ public class HomeController {
             }
         }
 
-        model.addAttribute("eventos", eventos);
+        // Proximos eventos
+        List<AgendaRuta> proximos = eventos.stream()
+                .filter(e -> !e.getFecha().isBefore(LocalDate.now()))
+                .collect(Collectors.toList());
+
+        // Eventos pasados
+        List<AgendaRuta> pasados = eventos.stream()
+                .filter(e -> e.getFecha().isBefore(LocalDate.now()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("proximos", proximos);
+        model.addAttribute("pasados", pasados);
         model.addAttribute("usuarioApuntado", usuarioApuntado);
+
         return "home";
     }
 }
