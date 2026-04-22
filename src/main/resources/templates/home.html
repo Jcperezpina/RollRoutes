@@ -2,137 +2,183 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>RollRoutes</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
-<h1>Bienvenido a RollRoutes 🚀</h1>
+<div class="container mt-4">
 
-<p>Encuentra y comparte rutas de patinaje</p>
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
 
-<!-- Usuario NO logueado -->
-<div th:if="${session.usuarioLogueado == null}">
-    <a href="/login">Login</a>
-    <a href="/registro">Registro</a>
-</div>
+        <div th:if="${session.usuarioLogueado != null}">
+        <span>
+            👤 <b th:text="${session.usuarioLogueado.nombre}"></b>
+        </span>
+        </div>
 
-<!-- Usuario logueado -->
-<div th:if="${session.usuarioLogueado != null}">
-    <a href="/rutas">Ver rutas</a>
-    <a href="/logout">Cerrar sesión</a>
+        <a th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol == 'ADMIN'}"
+           href="/usuarios-web"
+           class="btn btn-outline-dark btn-sm">
+            Usuarios
+        </a>
 
-    <!-- admin -->
-    <div th:if="${session.usuarioLogueado.rol == 'ADMIN'}">
-        <a href="/usuarios-web">Gestión de usuarios</a>
+        <a href="/logout" class="btn btn-outline-danger btn-sm">
+            Cerrar sesión
+        </a>
+
     </div>
+
+    <div class="text-center mb-5 p-4 bg-white rounded shadow-sm">
+        <h1 class="display-4">RollRoutes 🚀</h1>
+        <p class="lead">Encuentra y comparte rutas de patinaje</p>
+    </div>
+
+    <!-- Usuario NO logueado -->
+    <div th:if="${session.usuarioLogueado == null}" class="mb-4">
+        <a href="/login" class="btn btn-primary">Login</a>
+        <a href="/registro" class="btn btn-success">Registro</a>
+    </div>
+
+    <!-- Usuario logueado -->
+    <div th:if="${session.usuarioLogueado != null}" class="mb-4">
+        <a href="/rutas" class="btn btn-outline-secondary btn-sm">
+            Ver rutas
+        </a>
+    </div>
+
+    <!-- Agenda -->
+    <div class="bg-white p-3 rounded shadow-sm mb-4 text-center">
+
+        <h2 class="mb-0">Agenda de rutas</h2>
+
+    </div>
+
+    <!-- Proximos eventos -->
+    <div class="bg-white p-3 rounded shadow-sm mb-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Próximos eventos</h2>
+
+            <a th:if="${session.usuarioLogueado != null}"
+               href="/agenda/crear"
+               class="btn btn-warning btn-sm">
+                Crear evento
+            </a>
+        </div>
+
+        <table class="table table-striped table-hover align-middle">
+            <tr>
+                <th>Ruta</th>
+                <th>Fecha</th>
+                <th>Organizador</th>
+                <th>Acción</th>
+                <th>Participantes</th>
+                <th>Comentarios</th>
+                <th>Nuevo comentario</th>
+            </tr>
+
+            <tr th:each="evento : ${proximos}">
+                <td th:text="${evento.ruta.nombre}"></td>
+                <td th:text="${evento.fecha}"></td>
+                <td th:text="${evento.creador.nombre}"></td>
+
+                <!-- Acciones -->
+                <td>
+                    <a class="btn btn-outline-success btn-sm px-2 py-0 me-1"
+                       th:if="${session.usuarioLogueado != null and !usuarioApuntado[evento.id]}"
+                       th:href="@{'/agenda/unirse/' + ${evento.id}}">
+                        Unirse
+                    </a>
+
+                    <a class="btn btn-outline-secondary btn-sm px-2 py-0 me-1"
+                       th:if="${session.usuarioLogueado != null and usuarioApuntado[evento.id]}"
+                       th:href="@{'/agenda/salir/' + ${evento.id}}">
+                        Salir
+                    </a>
+
+                    <a class="btn btn-outline-danger btn-sm px-2 py-0"
+                       th:if="${session.usuarioLogueado != null and (evento.creador.id == session.usuarioLogueado.id or session.usuarioLogueado.rol == 'ADMIN')}"
+                       th:href="@{'/agenda/eliminar/' + ${evento.id}}">
+                        Eliminar
+                    </a>
+                </td>
+
+                <!-- Participantes -->
+                <td>
+            <span th:each="p : ${evento.participantes}"
+                  th:text="${p.nombre} + ' '">
+            </span>
+                </td>
+
+                <!-- Comentarios -->
+                <td>
+                    <div th:each="comentario : ${evento.comentarios}">
+                        <b th:text="${comentario.usuario.nombre}"></b>:
+                        <span th:text="${comentario.texto}"></span>
+                        <br>
+                    </div>
+                </td>
+
+                <!-- Formulario -->
+                <td>
+                    <form th:if="${session.usuarioLogueado != null}"
+                          action="/comentario/crear"
+                          method="post">
+
+                        <input type="hidden" name="eventoId" th:value="${evento.id}" />
+
+                        <input type="text"
+                               name="texto"
+                               class="form-control form-control-sm"
+                               placeholder="Escribe un comentario" />
+
+                        <button type="submit" class="btn btn-outline-primary btn-sm px-2 py-0 mt-1">
+                            Comentar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <!-- Eventos anteriores -->
+    <div class="bg-white p-3 rounded shadow-sm mb-4">
+
+        <h2 class="mb-3">Historial de eventos</h2>
+
+        <table class="table table-striped table-hover align-middle">
+            <tr>
+                <th>Ruta</th>
+                <th>Fecha</th>
+                <th>Organizador</th>
+                <th>Participantes</th>
+                <th>Comentarios</th>
+            </tr>
+
+            <tr th:each="evento : ${pasados}">
+                <td th:text="${evento.ruta.nombre}"></td>
+                <td th:text="${evento.fecha}"></td>
+                <td th:text="${evento.creador.nombre}"></td>
+
+                <td>
+            <span th:each="p : ${evento.participantes}"
+                  th:text="${p.nombre} + ' '">
+            </span>
+                </td>
+
+                <td>
+                    <div th:each="comentario : ${evento.comentarios}">
+                        <b th:text="${comentario.usuario.nombre}"></b>:
+                        <span th:text="${comentario.texto}"></span>
+                        <br>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
 </div>
-
-<h2>Agenda de rutas</h2>
-
-<a th:if="${session.usuarioLogueado != null}" href="/agenda/crear">
-    Crear evento
-</a>
-
-<h2>Próximos eventos</h2>
-
-<table border="1">
-    <tr>
-        <th>Ruta</th>
-        <th>Fecha</th>
-        <th>Organizador</th>
-        <th>Acción</th>
-        <th>Participantes</th>
-        <th>Comentarios</th>
-        <th>Nuevo comentario</th>
-    </tr>
-
-    <tr th:each="evento : ${proximos}">
-        <td th:text="${evento.ruta.nombre}"></td>
-        <td th:text="${evento.fecha}"></td>
-        <td th:text="${evento.creador.nombre}"></td>
-
-        <!-- Acciones -->
-        <td>
-            <a th:if="${session.usuarioLogueado != null and !usuarioApuntado[evento.id]}"
-               th:href="@{'/agenda/unirse/' + ${evento.id}}">
-                Unirse
-            </a>
-
-            <a th:if="${session.usuarioLogueado != null and usuarioApuntado[evento.id]}"
-               th:href="@{'/agenda/salir/' + ${evento.id}}">
-                Salir
-            </a>
-
-            <a th:if="${session.usuarioLogueado != null and (evento.creador.id == session.usuarioLogueado.id or session.usuarioLogueado.rol == 'ADMIN')}"
-               th:href="@{'/agenda/eliminar/' + ${evento.id}}">
-                Eliminar
-            </a>
-        </td>
-
-        <!-- Participantes -->
-        <td>
-            <span th:each="p : ${evento.participantes}"
-                  th:text="${p.nombre} + ' '">
-            </span>
-        </td>
-
-        <!-- Comentarios -->
-        <td>
-            <div th:each="comentario : ${evento.comentarios}">
-                <b th:text="${comentario.usuario.nombre}"></b>:
-                <span th:text="${comentario.texto}"></span>
-                <br>
-            </div>
-        </td>
-
-        <!-- Formulario -->
-        <td>
-            <form th:if="${session.usuarioLogueado != null}"
-                  action="/comentario/crear"
-                  method="post">
-
-                <input type="hidden" name="eventoId" th:value="${evento.id}" />
-
-                <input type="text" name="texto" placeholder="Escribe un comentario" />
-
-                <button type="submit">Comentar</button>
-            </form>
-        </td>
-    </tr>
-</table>
-
-<!-- Eventos anteriores -->
-
-<h2>Historial de eventos</h2>
-
-<table border="1">
-    <tr>
-        <th>Ruta</th>
-        <th>Fecha</th>
-        <th>Organizador</th>
-        <th>Participantes</th>
-        <th>Comentarios</th>
-    </tr>
-
-    <tr th:each="evento : ${pasados}">
-        <td th:text="${evento.ruta.nombre}"></td>
-        <td th:text="${evento.fecha}"></td>
-        <td th:text="${evento.creador.nombre}"></td>
-
-        <td>
-            <span th:each="p : ${evento.participantes}"
-                  th:text="${p.nombre} + ' '">
-            </span>
-        </td>
-
-        <td>
-            <div th:each="comentario : ${evento.comentarios}">
-                <b th:text="${comentario.usuario.nombre}"></b>:
-                <span th:text="${comentario.texto}"></span>
-                <br>
-            </div>
-        </td>
-    </tr>
-</table>
-
 </body>
 </html>

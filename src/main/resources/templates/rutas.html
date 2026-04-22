@@ -2,30 +2,70 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Rutas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
 
-<h1>Lista de rutas</h1>
+<body class="bg-light">
 
-<a href="/rutas/crear">Crear ruta</a>
+<div class="container mt-4">
 
-<table border="1">
-    <tr>
-        <th>Nombre</th>
-        <th>Ubicación</th>
-        <th>Fecha</th>
-        <th>Descripción</th>
-    </tr>
+    <!-- HEADER USUARIO -->
+    <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
 
-    <tr th:each="ruta : ${rutas}">
-        <td th:text="${ruta.nombre}"></td>
-        <td th:text="${ruta.ubicacion}"></td>
-        <td th:text="${ruta.fecha}"></td>
-        <td th:text="${ruta.descripcion}"></td>
-        <td th:text="${ruta.creador.nombre}"></td>
+        <div th:if="${session.usuarioLogueado != null}">
+            <span>
+                👤 <b th:text="${session.usuarioLogueado.nombre}"></b>
+            </span>
+        </div>
 
-    </tr>
-</table>
+        <a th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol == 'ADMIN'}"
+           href="/usuarios-web"
+           class="btn btn-outline-dark btn-sm">
+            Usuarios
+        </a>
+
+        <a href="/logout" class="btn btn-outline-danger btn-sm">
+            Cerrar sesión
+        </a>
+
+    </div>
+
+    <!-- Rutas -->
+    <div class="bg-white p-3 rounded shadow-sm mb-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-0">Lista de rutas</h1>
+
+            <a href="/rutas/crear" class="btn btn-warning btn-sm">
+                Crear ruta
+            </a>
+        </div>
+
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Ubicación</th>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Creador</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="ruta : ${rutas}">
+                <td th:text="${ruta.nombre}"></td>
+                <td th:text="${ruta.ubicacion}"></td>
+                <td th:text="${ruta.fecha}"></td>
+                <td th:text="${ruta.descripcion}"></td>
+                <td th:text="${ruta.creador.nombre}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
 
 </body>
 </html>
